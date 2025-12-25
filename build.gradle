@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.1'
+    id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -25,42 +25,36 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // 1. Web & Validation & Security
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.1'
-
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework:spring-messaging'
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
+    // 2. Database & Lombok
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-    // jwt
+    // 3. Swagger (OpenAPI)
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
+
+    // 4. JWT (JJWT)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // 스웨거 추가 종속성
-    implementation 'org.apache.commons:commons-lang3:3.13.0'
-
-    // S3
+    // 5. Cloud & Utils
     implementation 'software.amazon.awssdk:s3:2.25.63'
     implementation 'net.coobird:thumbnailator:0.4.20'
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-
+    // 6. Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // 모든 테스트 기능 포함
+    testImplementation 'org.springframework.security:spring-security-test' // 시큐리티 전용 테스트 도구
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 
