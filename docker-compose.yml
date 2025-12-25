@@ -23,6 +23,10 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    environment:
+      JWT_ACCESS_TOKEN_VALIDITY: ${JWT_ACCESS_TOKEN_VALIDITY}
+      JWT_REFRESH_TOKEN_VALIDITY: ${JWT_REFRESH_TOKEN_VALIDITY}
+      JWT_SECRET: ${JWT_SECRET}
     restart: always
     depends_on:
       db:
