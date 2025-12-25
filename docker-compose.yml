@@ -1,0 +1,9 @@
+services:
+  spring:
+    image: ${DOCKER_USERNAME}/tpo:latest
+    container_name: tpo
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: always
