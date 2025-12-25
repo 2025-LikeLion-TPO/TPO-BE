@@ -30,6 +30,8 @@ jobs:
             set -e
             cd ~/tpo
             
+            git pull origin main 
+            
             # .env 파일 생성 및 값 주입 (S3 키도 추가)
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > .env
             echo "JWT_ACCESS_TOKEN_VALIDITY=${{ secrets.JWT_ACCESS_TOKEN_VALIDITY }}" >> .env
