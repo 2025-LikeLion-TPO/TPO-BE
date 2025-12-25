@@ -19,5 +19,7 @@ public class AppProperties {
     private String cloudfrontDomain;
     private long presignSeconds = 3600;
     private String rootPrefix = "images";
+    private String accessKey;
+    private String secretKey;
   }
 }

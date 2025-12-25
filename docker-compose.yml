@@ -1,4 +1,19 @@
 services:
+  db:
+    image: mysql:8.0
+    container_name: tpo-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: TPO
+      MYSQL_ROOT_PASSWORD: "1234"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   spring:
     image: ${DOCKER_USERNAME}/tpo:latest
     container_name: tpo
@@ -7,3 +22,6 @@ services:
     env_file:
       - .env
     restart: always
+    depends_on:
+      db:
+        condition: service_healthy # DB가 응답 가능한 상태가 될 때까지 스프링 실행을 대기함
