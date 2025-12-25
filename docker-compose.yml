@@ -1,11 +1,10 @@
 services:
   db:
     image: mysql:8.0
-    container_name: tpo-db
     restart: always
     environment:
       MYSQL_DATABASE: TPO
-      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_ROOT_PASSWORD: 1234
     ports:
       - "3306:3306"
     healthcheck:
@@ -14,20 +13,13 @@ services:
       timeout: 5s
       retries: 20
 
-
-
   spring:
     image: ${DOCKER_USERNAME}/tpo:latest
-    container_name: tpo
     ports:
       - "8080:8080"
     env_file:
       - .env
-    environment:
-      JWT_ACCESS_TOKEN_VALIDITY: ${JWT_ACCESS_TOKEN_VALIDITY}
-      JWT_REFRESH_TOKEN_VALIDITY: ${JWT_REFRESH_TOKEN_VALIDITY}
-      JWT_SECRET: ${JWT_SECRET}
-    restart: always
     depends_on:
       db:
-        condition: service_healthy # DB가 응답 가능한 상태가 될 때까지 스프링 실행을 대기함
+        condition: service_healthy
+    restart: always
