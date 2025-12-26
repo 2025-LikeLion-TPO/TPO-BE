@@ -6,16 +6,15 @@ import org.example.tpo.dto.event.request.EventAlarmUpdateRequest;
 import org.example.tpo.dto.event.request.EventCreateRequest;
 import org.example.tpo.dto.event.request.EventUpdateRequest;
 import org.example.tpo.dto.event.response.ContactEventListWrapperResponse;
+import org.example.tpo.dto.event.response.EventDetailResponse;
 import org.example.tpo.dto.event.response.EventGuideResponse;
 import org.example.tpo.dto.event.response.EventListWrapperResponse;
 import org.example.tpo.entity.Users;
 import org.example.tpo.service.EventGuideService;
 import org.example.tpo.service.EventService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.example.tpo.dto.event.response.EventDetailResponse;
 
-// ✅ 로그인 유저 주입 방식에 맞게 수정 필요
-// 예: @AuthenticationPrincipal, @LoginUser, 세션 등
 @RestController
 @RequiredArgsConstructor
 public class EventController {
@@ -23,90 +22,117 @@ public class EventController {
     private final EventService eventService;
     private final EventGuideService eventGuideService;
 
+    // 🔹 공통: Authentication → Users 변환
+    private Users getLoginUser(Authentication authentication) {
+        return (Users) authentication.getPrincipal();
+    }
+
     @GetMapping("/events")
-    public EventListWrapperResponse getEvents(Users user) {
-        return eventService.getEvents(user);
+    public EventListWrapperResponse getEvents(Authentication authentication) {
+        return eventService.getEvents(getLoginUser(authentication));
     }
 
     @GetMapping("/contacts/{contactId}/events")
     public ContactEventListWrapperResponse getEventsByContact(
             @PathVariable Long contactId,
-            Users user   // ⚠️ 프로젝트 로그인 유저 주입 방식에 맞게 변경
+            Authentication authentication
     ) {
-        return eventService.getEventsByContact(user, contactId);
+        return eventService.getEventsByContact(
+                getLoginUser(authentication),
+                contactId
+        );
     }
 
     @GetMapping("/events/{eventId}")
     public EventDetailResponse getEventDetail(
             @PathVariable Long eventId,
-            Users user // ⚠️ 프로젝트 로그인 유저 주입 방식에 맞게 변경
+            Authentication authentication
     ) {
-        return eventService.getEventDetail(user, eventId);
+        return eventService.getEventDetail(
+                getLoginUser(authentication),
+                eventId
+        );
     }
 
     @GetMapping("/events/today")
-    public EventListWrapperResponse getTodayEvents(
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
-    ) {
-        return eventService.getTodayEvents(user);
+    public EventListWrapperResponse getTodayEvents(Authentication authentication) {
+        return eventService.getTodayEvents(getLoginUser(authentication));
     }
 
     @GetMapping("/events/upcoming")
-    public EventListWrapperResponse getUpcomingEvents(
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
-    ) {
-        return eventService.getUpcomingEvents(user);
+    public EventListWrapperResponse getUpcomingEvents(Authentication authentication) {
+        return eventService.getUpcomingEvents(getLoginUser(authentication));
     }
 
     @PostMapping("/events")
     public Long createEvent(
             @RequestParam Long contactId,
             @RequestBody @Valid EventCreateRequest request,
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
+            Authentication authentication
     ) {
-        return eventService.createEvent(user, contactId, request);
+        return eventService.createEvent(
+                getLoginUser(authentication),
+                contactId,
+                request
+        );
     }
 
     @PutMapping("/events/{eventId}")
     public void updateEvent(
             @PathVariable Long eventId,
             @RequestBody @Valid EventUpdateRequest request,
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
+            Authentication authentication
     ) {
-        eventService.updateEvent(user, eventId, request);
+        eventService.updateEvent(
+                getLoginUser(authentication),
+                eventId,
+                request
+        );
     }
 
     @PostMapping("/events/{eventId}/complete")
     public void completeEvent(
             @PathVariable Long eventId,
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
+            Authentication authentication
     ) {
-        eventService.completeEvent(user, eventId);
+        eventService.completeEvent(
+                getLoginUser(authentication),
+                eventId
+        );
     }
 
     @PutMapping("/events/{eventId}/alarm")
     public void updateEventAlarm(
             @PathVariable Long eventId,
             @RequestBody @Valid EventAlarmUpdateRequest request,
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
+            Authentication authentication
     ) {
-        eventService.updateEventAlarm(user, eventId, request.getNotificationEnabled());
+        eventService.updateEventAlarm(
+                getLoginUser(authentication),
+                eventId,
+                request.getNotificationEnabled()
+        );
     }
 
     @DeleteMapping("/events/{eventId}")
     public void deleteEvent(
             @PathVariable Long eventId,
-            Users user // ⚠️ 로그인 유저 주입 방식에 맞게
+            Authentication authentication
     ) {
-        eventService.deleteEvent(user, eventId);
+        eventService.deleteEvent(
+                getLoginUser(authentication),
+                eventId
+        );
     }
 
     @GetMapping("/events/{eventId}/guide")
     public EventGuideResponse getEventGuide(
             @PathVariable Long eventId,
-            Users user
+            Authentication authentication
     ) {
-        return eventGuideService.generateGuide(user, eventId);
+        return eventGuideService.generateGuide(
+                getLoginUser(authentication),
+                eventId
+        );
     }
-
 }
