@@ -2,7 +2,8 @@ name: CD - TPO Deploy
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -18,13 +19,11 @@ jobs:
           java-version: "21"
           distribution: "temurin"
 
-      # 스프링부트면 build 대신 bootJar가 더 확실함
       - name: Build JAR
         run: |
           chmod +x ./gradlew
           ./gradlew clean bootJar -x test
 
-      # 어떤 jar가 생성됐는지 로그로 찍고, "딱 1개"를 deploy/app.jar로 복사
       - name: Prepare deploy artifact (single app.jar)
         run: |
           echo "=== JAR LIST ==="
