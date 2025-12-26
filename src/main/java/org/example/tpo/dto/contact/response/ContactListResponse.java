@@ -11,4 +11,5 @@ public class ContactListResponse {
     private String contactName;
     private Integer temperature;
     private String relationshipType;
+    private String profileImageUrl;
 }
