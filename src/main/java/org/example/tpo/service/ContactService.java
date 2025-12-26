@@ -1,5 +1,6 @@
 package org.example.tpo.service;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.tpo.dto.contact.request.ContactCreateRequest;
 import org.example.tpo.dto.contact.response.ContactCreateResponse;
@@ -37,9 +38,17 @@ public class ContactService {
 
     public ContactCreateResponse createContact(
             Users user,
-            ContactCreateRequest request,
+            @Valid ContactCreateRequest request, // <- @Valid 추가
             MultipartFile profileImage
     ) {
+        if (user == null) {
+            throw new IllegalArgumentException("로그인한 유저 정보가 필요합니다.");
+        }
+
+        if (request.getCommunicationFrequency() == null || request.getCommunicationFrequency().isBlank()) {
+            throw new IllegalArgumentException("communicationFrequency는 필수입니다.");
+        }
+
         Contact contact = Contact.builder()
                 .user(user)
                 .contactName(request.getContactName())
@@ -47,19 +56,18 @@ public class ContactService {
                 .relationshipType(request.getRelationshipType())
                 .contactMethod(request.getContactMethod())
                 .communicationFrequency(request.getCommunicationFrequency())
-                .receiveCount(request.getReceiveCount())
+                .receiveCount(request.getReceiveCount() != null ? request.getReceiveCount() : 0)
                 .giveCount(0)
                 .relationshipMemo(request.getRelationshipMemo())
                 .build();
 
-        contactRepository.save(contact);
-
+        // 이미지 업로드
         if (profileImage != null && !profileImage.isEmpty()) {
-            String imageUrl = fileUploadService.uploadContactProfile(
-                    contact.getContactId(), profileImage
-            );
+            String imageUrl = fileUploadService.uploadContactProfile(contact.getContactId(), profileImage);
             contact.setProfileImageUrl(imageUrl);
         }
+
+        contactRepository.save(contact);
 
         return new ContactCreateResponse(
                 contact.getContactId(),
