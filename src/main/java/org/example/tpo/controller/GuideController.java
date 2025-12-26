@@ -2,6 +2,7 @@ package org.example.tpo.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.tpo.common.response.BaseResponse;
+import org.example.tpo.entity.Event;
 import org.example.tpo.entity.Guide;
 import org.example.tpo.service.GuideService;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class GuideController {
 
     @GetMapping
     public BaseResponse<Guide> getGuide(
-            @RequestParam Guide.EventType eventType,
+            @RequestParam Event.EventType eventType,
             @RequestParam Guide.RelationshipType relationshipType
     ) {
         return BaseResponse.success(
