@@ -19,7 +19,7 @@ public class SwaggerConfig {
   @Bean
   public OpenAPI custonOpenAPI() {
     Server localServer = new Server();
-    localServer.setUrl(contextPath);
+    localServer.setUrl(contextPath.isEmpty() ? "/" : contextPath);
     localServer.setDescription("TPO Server");
 
     // BearerAuth Security Scheme 정의
