@@ -338,4 +338,45 @@ public class EventService {
         eventRepository.delete(event);
     }
 
+    /**
+     * 🔔 오늘 알림 대상 이벤트 조회
+     */
+    @Transactional(readOnly = true)
+    public EventListWrapperResponse getTodayNotificationEvents(Users user) {
+
+        LocalDate today = LocalDate.now();
+
+        List<Event> events = eventRepository
+                .findByUserAndNotificationEnabledTrueAndEventStatusAndEventDate(
+                        user,
+                        Event.EventStatus.PLANNED,
+                        today
+                );
+
+        return EventListWrapperResponse.from(events);
+    }
+
+    /**
+     * 🔔 다가오는 알림 대상 이벤트 조회 (ex. 7일 이내)
+     */
+    @Transactional(readOnly = true)
+    public EventListWrapperResponse getUpcomingNotificationEvents(
+            Users user,
+            int days
+    ) {
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusDays(days);
+
+        List<Event> events = eventRepository
+                .findByUserAndNotificationEnabledTrueAndEventStatusAndEventDateBetween(
+                        user,
+                        Event.EventStatus.PLANNED,
+                        today.plusDays(1),
+                        endDate
+                );
+
+        return EventListWrapperResponse.from(events);
+    }
+
+
 }

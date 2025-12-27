@@ -2,6 +2,7 @@ package org.example.tpo.dto.event.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.tpo.entity.Event;
 
 import java.time.LocalDate;
 
@@ -18,4 +19,18 @@ public class EventListResponse {
     private LocalDate eventDate;
     private String eventMemo;
     private String eventStatus; // enum → String
+
+    /**
+     * Event 엔티티 → EventListResponse 변환
+     */
+    public static EventListResponse from(Event event) {
+        return new EventListResponse(
+                event.getEventId(),
+                event.getEventTitle(),
+                event.getEventType().getName(),
+                event.getEventDate(),
+                event.getEventMemo(),
+                event.getEventStatus().name()
+        );
+    }
 }

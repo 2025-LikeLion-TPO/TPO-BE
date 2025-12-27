@@ -188,4 +188,41 @@ public class EventController {
                 eventId
         );
     }
+
+    @Operation(
+            summary = "알림 대상 오늘 이벤트 조회",
+            description = """
+    🔔 알림이 ON 된 이벤트 중
+    - 오늘 날짜에 해당하는 이벤트 목록을 반환합니다.
+    - 프론트에서 알림/배너/뱃지 처리용으로 사용합니다.
+    """
+    )
+    @GetMapping("/events/notifications/today")
+    public EventListWrapperResponse getTodayNotificationEvents(
+            Authentication authentication
+    ) {
+        return eventService.getTodayNotificationEvents(
+                getLoginUser(authentication)
+        );
+    }
+
+    @Operation(
+            summary = "알림 대상 다가오는 이벤트 조회",
+            description = """
+    🔔 알림이 ON 된 이벤트 중
+    - 오늘 이후 N일 이내의 이벤트를 반환합니다.
+    - 기본 알림 리스트용 API입니다.
+    """
+    )
+    @GetMapping("/events/notifications/upcoming")
+    public EventListWrapperResponse getUpcomingNotificationEvents(
+            @RequestParam(defaultValue = "7") int days,
+            Authentication authentication
+    ) {
+        return eventService.getUpcomingNotificationEvents(
+                getLoginUser(authentication),
+                days
+        );
+    }
+
 }
