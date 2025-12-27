@@ -1,4 +1,4 @@
-package org.example.tpo.dto.user.response;
+package org.example.tpo.dto.mypage.response;
 
 import lombok.*;
 import org.example.tpo.entity.Users;
@@ -9,9 +9,8 @@ import org.example.tpo.entity.Users;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDto {
-    private String accessToken;
-    private String username;
+public class MypageProfileResponseDto {
+    private String profileImage;
     private String nickname;
     private Integer age;
     private String job;

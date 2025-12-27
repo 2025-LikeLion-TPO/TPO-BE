@@ -12,6 +12,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByContactOrderByEventDateDesc(Contact contact);
     List<Event> findByUserOrderByEventDateAsc(Users user);
+
+    List<Event> findByUserAndEventStatusOrderByEventDateDesc(Users user, Event.EventStatus status);
     List<Event> findByUserAndEventDateOrderByEventDateAsc(
             Users user,
             LocalDate eventDate
@@ -23,6 +25,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     );
     List<Event> findByUserAndEventDateBetweenOrderByEventDateAsc(
             Users user,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
+    List<Event> findByUserAndEventStatusAndEventDateBetweenOrderByEventDateDesc(
+            Users user,
+            Event.EventStatus eventStatus,
             LocalDate startDate,
             LocalDate endDate
     );
