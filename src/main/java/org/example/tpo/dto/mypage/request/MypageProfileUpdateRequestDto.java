@@ -1,7 +1,8 @@
-package org.example.tpo.dto.user.response;
+package org.example.tpo.dto.mypage.request;
 
 import lombok.*;
 import org.example.tpo.entity.Users;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Setter
@@ -9,9 +10,8 @@ import org.example.tpo.entity.Users;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDto {
-    private String accessToken;
-    private String username;
+public class MypageProfileUpdateRequestDto {
+    private MultipartFile profileImage;
     private String nickname;
     private Integer age;
     private String job;

@@ -1,6 +1,6 @@
 name: CD - TPO Deploy
 
-on:
+"on":
   push:
     branches:
       - main

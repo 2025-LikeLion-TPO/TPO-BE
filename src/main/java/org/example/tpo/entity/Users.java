@@ -32,13 +32,16 @@ public class Users {
     private String nickname; // 또는 nickname
 
     @Column
+    private String profileImage;
+
+    @Column
     private Integer age;
 
     @Column(length = 50)
     private String job;
 
     @Column
-    private Long income; // 연 소득 기준 (만원/원 단위는 정책에 맞게)
+    private String income; // 연 소득 기준 (만원/원 단위는 정책에 맞게)
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
