@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.example.tpo.entity.Users.UserPreference.NEUTRAL;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -51,6 +53,8 @@ public class UserService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+//                .profileImage("https://tpo-demo.s3.ap-northeast-2.amazonaws.com/images/default.jpeg")
+                .preference(NEUTRAL)
                 .build();
 
         userRepository.save(user);
