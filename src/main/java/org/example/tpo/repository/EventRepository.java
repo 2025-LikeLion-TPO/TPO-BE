@@ -51,4 +51,19 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     // ✅ recentContacts용: 유저 이벤트 최신순 (eventDate DESC, eventId DESC)
     List<Event> findByUserOrderByEventDateDescEventIdDesc(Users user, Pageable pageable);
+
+    // 🔔 오늘 알림 대상 이벤트
+    List<Event> findByUserAndNotificationEnabledTrueAndEventStatusAndEventDate(
+            Users user,
+            Event.EventStatus eventStatus,
+            LocalDate eventDate
+    );
+
+    // 🔔 다가오는 알림 대상 이벤트
+    List<Event> findByUserAndNotificationEnabledTrueAndEventStatusAndEventDateBetween(
+            Users user,
+            Event.EventStatus eventStatus,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 }
