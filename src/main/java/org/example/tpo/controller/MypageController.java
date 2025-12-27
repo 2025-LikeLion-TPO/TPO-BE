@@ -8,10 +8,12 @@ import org.example.tpo.common.response.BaseResponse;
 import org.example.tpo.dto.mypage.request.MypageProfileUpdateRequestDto;
 import org.example.tpo.dto.mypage.response.MypageHistoryResponseDto;
 import org.example.tpo.dto.mypage.response.MypageProfileResponseDto;
+import org.example.tpo.dto.mypage.response.MypageReservationResponseDto;
 import org.example.tpo.dto.user.request.SignUpRequestDto;
 import org.example.tpo.entity.Users;
 import org.example.tpo.service.MypageService;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,6 +96,15 @@ public class MypageController {
         - '3MONTH' : 최근 3달 동안의 기록을 조회합니다.
         - '1YEAR' : 최근 1년동안의 기록을 조회합니다.
         - 'ALL' : 모든 기록을 조회합니다.
+        
+        필드 설명:
+        - `date` : 이벤트가 발생한 날짜 (형식: yyyy-MM-dd)
+        - `eventType` : 이벤트 카테고리 이름
+        - `title` : 이벤트 카드 제목
+        - `name` : 이벤트 대상자의 이름
+        - `relationship` : 사용자와 대상자의 관계
+        - `temperature` : 대상자와의 친밀도를 나타내는 수치
+        - `profileImageUrl` : 대상자의 프로필 이미지 URL
         """
     )
     public BaseResponse<List<MypageHistoryResponseDto>> history(@AuthenticationPrincipal Users user,
@@ -101,6 +112,41 @@ public class MypageController {
         List<MypageHistoryResponseDto> responseDto = mypageService.history(user, period);
 
         return BaseResponse.success("기록을 성공적으로 조회하였습니다.", responseDto);
+    }
+
+    @GetMapping("/reservation")
+    @Operation(
+            summary = "마이페이지 예약 조회",
+            description = """
+        로그인한 사용자의 이벤트 예약을 조회하는 API입니다.
+        
+        필드 설명:
+        - `date` : 이벤트가 발생한 날짜 (형식: yyyy-MM-dd)
+        - `eventType` : 이벤트 카테고리 이름
+        - `title` : 이벤트 카드 제목
+        - `name` : 이벤트 대상자의 이름
+        - `relationship` : 사용자와 대상자의 관계
+        - `temperature` : 대상자와의 친밀도를 나타내는 수치
+        - `profileImageUrl` : 대상자의 프로필 이미지 URL
+        """
+    )
+    public BaseResponse<List<MypageReservationResponseDto>> reservation(@AuthenticationPrincipal Users user) {
+        List<MypageReservationResponseDto> responseDto = mypageService.reservation(user);
+
+        return BaseResponse.success("예약 목록을 성공적으로 조회하였습니다.", responseDto);
+    }
+
+    @GetMapping("/reservation/alarmOff/{eventId}")
+    @Operation(
+            summary = "마이페이지 예약 알림 끄기",
+            description = """
+        특정 이벤트의 예약 알림을 끄는 API입니다.
+        """
+    )
+    public ResponseEntity alarmOff(@PathVariable Long eventId) {
+        mypageService.alarmOff(eventId);
+
+        return ResponseEntity.ok("해당 이벤트의 알림을 성공적으로 껐습니다.");
     }
 
 }
