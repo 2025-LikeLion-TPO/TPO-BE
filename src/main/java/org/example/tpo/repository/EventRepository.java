@@ -12,6 +12,26 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     // contact 상세(지난 이벤트)
     List<Event> findByContactOrderByEventDateDesc(Contact contact);
+    List<Event> findByUserOrderByEventDateAsc(Users user);
+
+    List<Event> findByUserAndEventStatusOrderByEventDateDesc(Users user, Event.EventStatus status);
+    List<Event> findByUserAndEventDateAfterAndEventStatusOrderByEventDateAsc(
+            Users user,
+            LocalDate date,
+            Event.EventStatus eventStatus
+    );
+    List<Event> findByUserAndEventDateBetweenOrderByEventDateAsc(
+            Users user,
+            LocalDate startDate,
+            LocalDate endDate
+    );
+
+    List<Event> findByUserAndEventStatusAndEventDateBetweenOrderByEventDateDesc(
+            Users user,
+            Event.EventStatus eventStatus,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 
     // giveCount 계산/검증용
     long countByContactAndEventStatus(Contact contact, Event.EventStatus eventStatus);
