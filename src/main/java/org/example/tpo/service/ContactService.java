@@ -21,6 +21,8 @@ import org.example.tpo.repository.EventRepository;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Service
 @RequiredArgsConstructor
 public class ContactService {
@@ -28,6 +30,24 @@ public class ContactService {
     private final ContactRepository contactRepository;
     private final FileUploadService fileUploadService;
     private final EventRepository eventRepository;
+
+
+    @Value("${app.s3.bucket}")
+    private String bucket;
+
+    @Value("${app.s3.root-prefix}")
+    private String prefix;
+
+    private String resolveProfileImageUrl(String storedUrl) {
+        if (storedUrl == null || storedUrl.isBlank()) {
+            return String.format(
+                    "https://%s.s3.ap-northeast-2.amazonaws.com/%s/default.jpeg",
+                    bucket,
+                    prefix
+            );
+        }
+        return storedUrl;
+    }
 
     public ContactListWrapperResponse getContacts(Users user) {
 
@@ -38,7 +58,7 @@ public class ContactService {
                         contact.getContactName(),
                         contact.getTemperature(),
                         contact.getRelationshipType(),
-                        contact.getProfileImageUrl()
+                        resolveProfileImageUrl(contact.getProfileImageUrl())
                 ))
                 .toList();
 
@@ -86,7 +106,7 @@ public class ContactService {
                 contact.getContactName(),
                 contact.getTemperature(),
                 contact.getRelationshipType(),
-                contact.getProfileImageUrl(),
+                resolveProfileImageUrl(contact.getProfileImageUrl()),
                 contact.getCreatedAt(),
                 contact.getUpdatedAt()
         );
@@ -182,10 +202,9 @@ public class ContactService {
                 contact.getGiveCount(),
                 contact.getReceiveCount(),
                 contact.getRelationshipMemo(),
-                contact.getProfileImageUrl(),
+                resolveProfileImageUrl(contact.getProfileImageUrl()),
                 contact.getCreatedAt(),
-                contact.getUpdatedAt()
-        );
+                contact.getUpdatedAt());
     }
 
     public ContactEventListWrapperResponse getContactEvents(Users user, Long contactId) {
