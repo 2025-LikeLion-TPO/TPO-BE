@@ -10,6 +10,7 @@ import org.example.tpo.config.AppProperties;
 import org.example.tpo.dto.mypage.request.MypageProfileUpdateRequestDto;
 import org.example.tpo.dto.mypage.response.MypageHistoryResponseDto;
 import org.example.tpo.dto.mypage.response.MypageProfileResponseDto;
+import org.example.tpo.dto.mypage.response.MypageReservationResponseDto;
 import org.example.tpo.entity.Contact;
 import org.example.tpo.entity.Event;
 import org.example.tpo.entity.Users;
@@ -28,6 +29,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import static org.example.tpo.entity.Event.EventStatus.PLANNED;
 
 @Slf4j
 @Service
@@ -189,6 +192,59 @@ public class MypageService {
         return histories;
     }
 
+    public List<MypageReservationResponseDto> reservation(Users user) {
+
+        List<Event> events = eventRepository.findByUserAndEventStatusAndNotificationEnabledOrderByEventDateDesc(user, PLANNED, true);
+
+        String defaultProfileImageUrl = String.format(
+                "https://%s.s3.ap-northeast-2.amazonaws.com/%s/default.jpeg",
+                bucket,
+                prefix
+        );
+
+        List<MypageReservationResponseDto> reservations = events.stream()
+                .map(event -> {
+
+                    Contact contact = event.getContact(); // 또는 event.getTarget()
+
+                    return MypageReservationResponseDto.builder()
+                            .eventId(event.getEventId())
+                            // 날짜
+                            .date(event.getEventDate())
+
+                            // 카테고리
+                            .eventType(event.getEventType().getName())
+                            // 예: BIRTHDAY → "생일"
+
+                            // 카드 제목
+                            .title(event.getEventTitle())
+
+                            // 대상 정보
+                            .name(contact.getContactName())
+                            .relationship(contact.getRelationshipType())
+                            .temperature(contact.getTemperature())
+
+                            // 프로필 이미지
+                            .profileImageUrl(
+                                    contact.getProfileImageUrl() != null
+                                            ? contact.getProfileImageUrl()
+                                            : defaultProfileImageUrl
+                            )
+
+                            .build();
+                })
+                .toList();
+
+        return reservations;
+    }
+
+    //알림 끄기
+    public void alarmOff(Long eventId){
+        Event event = eventRepository.findByEventId(eventId);
+        event.setNotificationEnabled(false);
+        eventRepository.save(event);
+//        log.info("eventId={} 의 알림을 껐습니다.", eventId);
+    }
 
     //이미지 삭제
     private String extractS3Key(String imageUrl) {

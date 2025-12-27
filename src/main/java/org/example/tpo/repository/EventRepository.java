@@ -10,11 +10,16 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+    Event findByEventId(long id);
+
     // contact 상세(지난 이벤트)
     List<Event> findByContactOrderByEventDateDesc(Contact contact);
     List<Event> findByUserOrderByEventDateAsc(Users user);
 
     List<Event> findByUserAndEventStatusOrderByEventDateDesc(Users user, Event.EventStatus status);
+
+    List<Event> findByUserAndEventStatusAndNotificationEnabledOrderByEventDateDesc(Users user, Event.EventStatus status, Boolean notification);
+
     List<Event> findByUserAndEventDateAfterAndEventStatusOrderByEventDateAsc(
             Users user,
             LocalDate date,
